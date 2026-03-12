@@ -69,7 +69,7 @@ We do not require a perfect bell curve. Markets are not normally distributed. In
 In the distribution phase, aggressive buyers should be hitting offers — generating positive delta. A participant exiting via limit sells needs that buying pressure. So delta_distribution > 0 is added as a confirmation filter. The reverse is true for sell-side trade.
 
 **Signal trigger:**
-Three-bar construction at the extremum confirms the turn. Entry on the close of the signal bar. Maximum volume traded side (green offer/red bid) must match the price bar direction.
+Three-bar construction at the extremum (end of the swing) confirms the turn. Entry on the close of the signal bar. Maximum volume traded side (green offer/red bid) must match the price bar direction.
 
 **RU:**
 Для каждого тикера и таймфрейма (в условном понимании) бот непрерывно отслеживает экстремумы свингов — пики и донья — на рейндж-барах.
@@ -96,7 +96,7 @@ Three-bar construction at the extremum confirms the turn. Entry on the close of 
 поглощает давление покупателей. Условие delta_distribution > 0 используется как фильтр подтверждения. Обратная логика применяется к продажам.
 
 **Триггер сигнала:**
-Трёхбарная конструкция на экстремуме подтверждает разворот. Вход на закрытии сигнального бара. Проторговка максимально объема (на оффере/на биде) должна совпадать с направлением бара.
+Трёхбарная конструкция на экстремуме (в конце движения) подтверждает разворот и является местом входа - на закрытии сигнального бара. Проторговка максимально объема (на оффере/на биде) должна совпадать с направлением бара.
 
 ---
 
@@ -104,7 +104,7 @@ Three-bar construction at the extremum confirms the turn. Entry on the close of 
 
 **EN:**
 - **Python 3.12** — async core via `asyncio`
-- **BitGet Futures API** — market data & order execution
+- **BitGet Futures API** — market data & order execution. Custom, hand-crafted BitGet API client built from scratch following official documentation.
 - **Redis** — real-time candle state, session management (in case of script termination)
 - **Plotly Dash** — live dashboard with candlestick charts, volume histogram, delta histogram
 - **GARCH (arch library)** — volatility estimation for range-bar construction
@@ -113,7 +113,7 @@ Three-bar construction at the extremum confirms the turn. Entry on the close of 
 
 **RU:**
 - **Python 3.12** — асинхронное ядро на `asyncio`
-- **BitGet Futures API** — рыночные данные и исполнение ордеров
+- **BitGet Futures API** — рыночные данные и исполнение ордеров. Модуль самописный, собран по документации биржи.
 - **Redis** — состояние свечей в реальном времени, управление сессией (на случай остановки скрипта робота)
 - **Plotly Dash** — живой дашборд: свечи, гистограмма объёма, гистограмма дельты
 - **GARCH (библиотека arch)** — оценка волатильности для расчета диапазонов рейндж-баров
