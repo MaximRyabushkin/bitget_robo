@@ -20,6 +20,8 @@ In essence, volume × price range = work, in the physical sense. Range bars norm
 
 В качестве физической аналогии, объём × диапазон цены = работа. Рейндж-бары нормируют расстояние, поэтому объём становится сопоставимым между барами. Таким образом мы получаем меру рыночного усилия на единицу ценового движения.
 
+---
+
 ## The Model / Модель
 
 **EN:**
@@ -41,7 +43,9 @@ What we can observe is the footprint of this behavior in the volume distribution
 
 Мы стремимся обнаружить признаки этого поведения при распределении объёма в свинге: фаза накопления и фаза распределения должны быть примерно сбалансированы по объёму — то есть кто-то вошёл, и затем вышел. Если накопленный объём значительно превышает объём в фазе распределения — полагаем, что позиция не была полностью закрыта. Разворота не ожидается.
 
-## How It Works / Как это работает
+---
+
+## How It Works / Механизм
 
 **EN:**
 For each ticker and so-called timeframe, the bot continuously monitors for swing extremums — peaks and troughs — on range bars.
@@ -93,3 +97,54 @@ Three-bar construction at the extremum confirms the turn. Entry on the close of 
 
 **Триггер сигнала:**
 Трёхбарная конструкция на экстремуме подтверждает разворот. Вход на закрытии сигнального бара. Проторговка максимально объема (на оффере/на биде) должна совпадать с направлением бара.
+
+---
+
+## Stack / Технологии
+
+**EN:**
+- **Python 3.12** — async core via `asyncio`
+- **BitGet Futures API** — market data & order execution
+- **Redis** — real-time candle state, session management (in case of script termination)
+- **Plotly Dash** — live dashboard with candlestick charts, volume histogram, delta histogram
+- **GARCH (arch library)** — volatility estimation for range-bar construction
+- **scipy, numpy** — swing volume distribution analysis
+- **aiohttp** — async HTTP client for exchange communication
+
+**RU:**
+- **Python 3.12** — асинхронное ядро на `asyncio`
+- **BitGet Futures API** — рыночные данные и исполнение ордеров
+- **Redis** — состояние свечей в реальном времени, управление сессией (на случай остановки скрипта робота)
+- **Plotly Dash** — живой дашборд: свечи, гистограмма объёма, гистограмма дельты
+- **GARCH (библиотека arch)** — оценка волатильности для расчета диапазонов рейндж-баров
+- **scipy, numpy** — анализ распределения объёма свинга
+- **aiohttp** — асинхронный HTTP-клиент для работы с биржей
+
+---
+
+## Status / Статус проекта
+
+**EN:**
+Active development. The bot runs live on BitGet Futures. Core signal logic is functional. 
+
+This is a personal research project — not financial advice, not a commercial product. Results are not guaranteed. Performance depends heavily on market conditions and parameter calibration.
+
+**RU:**
+В активной разработке. Бот работает вживую на BitGet Futures. Торговая логика функциональна. 
+
+Это личный исследовательский проект — не финансовая рекомендация, не коммерческий продукт. Результаты не гарантированы.
+Производительность торговой системы сильно зависит от рыночных условий и калибровки параметров.
+
+---
+
+## Disclaimer / Дисклеймер
+
+**EN:**
+Trading futures involves substantial risk of loss. This software is provided for educational and research purposes only. 
+Nothing in this repository constitutes financial advice. 
+Use at your own risk.
+
+**RU:**
+Торговля фьючерсами сопряжена со значительным риском потерь. 
+Данное программное обеспечение предоставляется исключительно в образовательных и исследовательских целях. 
+Используйте на свой страх и риск.
