@@ -104,7 +104,7 @@ Three-bar construction at the extremum (end of the swing) confirms the turn. Ent
 
 **EN:**
 - **Python 3.12** — async core via `asyncio`
-- **BitGet Futures API** — market data & order execution. Custom, hand-crafted BitGet API client built from scratch following official documentation.
+- **BitGet Futures API** — market data & order execution. Custom, hand-crafted BitGet API client built from scratch following official documentation
 - **Redis** — real-time candle state, data persistence during session (in case of script termination)
 - **Plotly Dash** — live dashboard with candlestick charts, volume histogram, delta histogram
 - **GARCH (arch library)** — volatility estimation for range-bar construction
@@ -113,9 +113,9 @@ Three-bar construction at the extremum (end of the swing) confirms the turn. Ent
 
 **RU:**
 - **Python 3.12** — асинхронное ядро на `asyncio`
-- **BitGet Futures API** — рыночные данные и исполнение ордеров. Модуль самописный, собран по документации биржи.
+- **BitGet Futures API** — рыночные данные и исполнение ордеров. Модуль самописный, собран по документации биржи
 - **Redis** — состояние свечей в реальном времени, хранение данных внутри сессии (на случай остановки скрипта робота)
-- **Plotly Dash** — живой дашборд: свечи, гистограмма объёма, гистограмма дельты
+- **Plotly Dash** — дашборд в реальном времени: свечи, гистограмма объёма, гистограмма дельты
 - **GARCH (библиотека arch)** — оценка волатильности для расчета диапазонов рейндж-баров
 - **scipy, numpy** — анализ распределения объёма свинга
 - **aiohttp** — асинхронный HTTP-клиент для работы с биржей
