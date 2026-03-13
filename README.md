@@ -137,6 +137,10 @@ This is a personal research project — not financial advice, not a commercial p
 
 ---
 
+### Dashboard UI / Интерфейс дашборда
+
+![Dashboard screenshot](screenshots/dashboard_example.png "Live дашборд с range-барами и гистограммой объёма")
+
 ## Disclaimer / Дисклеймер
 
 **EN:**
