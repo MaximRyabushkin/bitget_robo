@@ -142,7 +142,6 @@ This is a personal research project — not financial advice, not a commercial p
 
 ### Dashboard UI / Интерфейс дашборда
 
-![Dashboard screenshot](screenshots/XAUUSDT.png "Дашборд - XAUUSDT")
 ![Dashboard screenshot](screenshots/HYPEUSDT.png "Дашборд - HYPEUSDT")
 
 
