@@ -11,7 +11,7 @@ volume distribution across swing phases reveals optimal exit behavior.
 ## The Idea / Идея
 
 **EN:**
-Range bars fix price movement, not time. Each bar covers an identical price interval — making it a natural histogram bin. A price swing from origin to target becomes a statistical sample: a distribution of volume across equal price increments.
+Range bars fix price movement, not time. Each bar covers an identical price interval — making it a natural histogram bin. A price swing from origin to target becomes a statistical sample: a distribution of volume across equal price increments. To reduce noise and isolate a potential single large position within the overall flow, the bot tracks not the full volume profile across all price levels, but the dominant level of each bar — the price with the highest volume — along with its aggression side: whether the initiative belongs to the buyer (green offer in the tape) or the seller (red bid). This is, in effect, a simplified footprint.
 
 In essence, volume × price range = work, in the physical sense. Range bars normalize the "distance" component, so volume becomes directly comparable across bars — a clean measure of market effort per unit of price movement.
 
@@ -25,18 +25,18 @@ In essence, volume × price range = work, in the physical sense. Range bars norm
 ## The Model / Модель
 
 **EN:**
-The model makes no assumptions about "smart money" or institutional actors. It describes something simpler: the rational behavior of any participant who needs to exit a large position.
+The model makes no assumptions about "smart money" or institutional actors. It describes something simpler: what does rational behavior look like for any participant who needs to exit a position?
 
-If you have accumulated a significant position, you cannot exit with a single market order without moving price against yourself. The optimal solution is to place limit orders and let aggressive counterparties come to you — exit into strength, sell into buying pressure.
+The constraint is straightforward: if you have accumulated a significant position, you cannot exit with a single market order without moving price against yourself. The optimal solution is to place limit orders and let aggressive counterparties come to you — exit into strength, sell into buying pressure. Crucially, what is mechanically forced upon a large position is simultaneously optimal behavior at any scale.
 
-This mechanics is scale-invariant. It applies equally to a retail trader managing a large-for-them position and to a hedge fund unwinding a block. Besides, we do not know who is on the other side. We do not need to.
+This mechanics is scale-invariant. It applies equally to a retail trader managing a large-for-them position and to a hedge fund unwinding a block. Moreover, it does not matter who is on the other side — we can treat the aggregate market as a single personified counterparty.
 
-What we can observe is the footprint of this behavior in the volume distribution: a swing where the accumulation phase and the distribution phase are roughly balanced in volume — meaning someone entered, and then exited. If accumulation volume significantly exceeds distribution, the position was not fully unwound. No reversal expected.
+What we observe is the footprint of this behavior: distribution volume must be at least equal to accumulation volume (ratio ≥ 0.9). If accumulation significantly exceeds distribution, the position was not fully unwound. No reversal expected. Additional structural requirements on phase shape are described in the code.
 
 **RU:**
 Модель не апеллирует явным образом к концепции "умных денег" или действиям больших игроков. Напротив, она опирается на общее место, стараясь ответить на очевидный вопрос: каково будет рациональное поведение всякого участника, которому необходимо выйти из позиции? Поясним.
 
-Тривиально утверждение: если вы накопили значительную позицию, то не можете выйти одним рыночным ордером не сдвинув цену против себя. Оптимальное решение — выставить лимитные ордера и ждать когда агрессивные контрагенты придут к вам — "выходить в силу", "продавать в покупки" (современная терминология нейросетей 🤷‍♂️). Однако, то, что продиктовано механически обусловленным ограничением для крупной позиции (в сравнении с общим рынком), в то же время отражает оптимальное управление позицией любого размера.
+Тривиально утверждение: если вы накопили значительную позицию, то не можете выйти одним рыночным ордером не сдвинув цену против себя. Оптимальное решение — выставить лимитные ордера и ждать когда агрессивные контрагенты придут к вам — "выходить в силу", "продавать в покупки". Однако, то, что продиктовано механически обусловленным ограничением для крупной позиции (в сравнении с общим рынком), в то же время отражает оптимальное управление позицией любого размера.
 
 Механика выхода не зависит от масштаба торговли. Она одинаково применима и к розничному трейдеру с чувствительной позицией, и к хедж-фонду при выходе из большого объема. 
 Более того, не играет роли, кто торгует против нас. Нам этого и не нужно знать, и мы можем воспринимать общий рынок как персонифицированного контрагента.
@@ -60,16 +60,19 @@ The swing is split into two phases at the bar of maximum volume:
 The core condition: distribution volume must be at least 90% of accumulation volume (ratio ≥ 0.9). This is the "position was unwound" check. If accumulation significantly exceeds distribution — no signal.
 
 **Distribution shape:**
-We do not require a perfect bell curve. Markets are not normally distributed. Instead we test:
-- Volume peak is not at the very edge of the swing (peak position 0.1–0.9)
-- Maximum volume is not on the final bar (no climax)
-- Skewness ≤ 1.2, normalized entropy ≤ 0.95
+We do not require a perfect bell curve. Instead, we explicitly favor a short accumulation phase followed by a longer distribution — the volume peak should fall in the first half of the swing. This structure suggests a sharp entry followed by a gradual exit via limit orders. We verify:
+
+- Phase volume ratio (distribution ≥ 90% of accumulation)
+- Peak position in the first half of the swing
+- Negative slope of the distribution phase (volume fading as the position unwinds)
+
+The use of skewness and entropy as shape metrics is a matter of ongoing experimentation; structural filters are currently preferred.
 
 **Delta confirmation:**
 In the distribution phase, aggressive buyers should be hitting offers — generating positive delta. A participant exiting via limit sells needs that buying pressure. So delta_distribution > 0 is added as a confirmation filter. The reverse is true for sell-side trade.
 
 **Signal trigger:**
-Three-bar construction at the extremum (end of the swing) confirms the turn. Entry on the close of the signal bar. Maximum volume traded side (green offer/red bid) must match the price bar direction.
+Three-bar construction at the extremum confirms the turn. Entry on the close of the signal bar. The maximum volume level of the signal bar and the preceding bar must both show aggression on the same side as the reversal, and the dominant volume of the signal bar must be lower than that of the preceding bar — indicating that aggressive pressure is fading at the entry point.
 
 **RU:**
 Для каждого тикера и таймфрейма (в условном понимании для данной стратегии) бот непрерывно отслеживает экстремумы свингов — пики и донья — на рейндж-барах.
@@ -104,7 +107,7 @@ Three-bar construction at the extremum (end of the swing) confirms the turn. Ent
 
 **EN:**
 - **Python 3.12** — async core via `asyncio`
-- **BitGet Futures API** — market data & order execution. Custom, hand-crafted BitGet API client built from scratch following official documentation
+- **BitGet Futures API** — market data & order execution. Custom, hand-crafted BitGet API client built from scratch following official documentation. Both limit and market order entries are implemented. Limit orders proved unreliable in practice due to WebSocket order channel read errors and resulting SL/TP management issues. Market entries are preferred despite higher commission cost.
 - **Redis** — real-time candle state, data persistence during session (in case of script termination)
 - **Plotly Dash** — live dashboard with candlestick charts, volume histogram, delta histogram
 - **GARCH (arch library)** — volatility estimation for range-bar construction
